@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Bean;
 
 import haagahelia.bookStore.domain.Book;
 import haagahelia.bookStore.domain.BookRepository;
+import haagahelia.bookStore.domain.Category;
+import haagahelia.bookStore.domain.CategoryRepository;
 
 @SpringBootApplication
 public class BookStoreApplication {
@@ -21,17 +23,19 @@ public class BookStoreApplication {
 	}
 	
 	@Bean
-	public CommandLineRunner BookDemo(BookRepository repository) {
+	public CommandLineRunner bookDemo(BookRepository srepository, CategoryRepository drepository) {
 		return (args) -> {
-			log.info("save");
-			Book b1 = new Book("Author1", "Title1", "123", 2021);
-			Book b2 = new Book("Author2", "Title2", "456", 2022);	
+			log.info("save a couple of books");
+			drepository.save(new Category("Detective"));
+			drepository.save(new Category("Novella"));
+			drepository.save(new Category("Documentary"));
 			
-			repository.save(b1);
-			repository.save(b2);
+			srepository.save(new Book("Author1", "Title1", "1234", 2022, drepository.findByName("Detective").get(0)));
+			srepository.save(new Book("Author2", "Title2", "1234", 2021, drepository.findByName("Novella").get(0)));	
 			
-			log.info("fetch");
-			for (Book book: repository.findAll()) {
+			
+			log.info("fetch all books");
+			for (Book book: srepository.findAll()) {
 				log.info(book.toString());
 			}
 
